@@ -1,0 +1,22 @@
+{
+    "name": "chumakovanton/yii2-sign-me",
+    "description": "Extension for sign.me service",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"," sign.me"," EDS"," digital signature"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chumakov Anton",
+            "email": "anton.4umakov@yandex.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "chumakovAnton\\signMe\\": ""
+        }
+    }
+}
