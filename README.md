@@ -28,7 +28,5 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-<?= \chumakovAnton\signMe\AutoloadExample::widget(); ?>```
-=======
-# yii2-sign-me
-Extension for sign.me service
+<?= \chumakovAnton\signMe\AutoloadExample::widget(); ?>
+```
