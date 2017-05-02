@@ -28,12 +28,12 @@ class SignMe extends Object
     /**
      * @var string $apiKey Ключ доступа к API
      */
-    private $apiKey;
+    public $apiKey;
 
     /**
      * @var string $fileName Непосредственно имя файла с расширением
      */
-    private $fileName;
+    private $_fileName;
 
     /**
      * @var string $filePath Путь к каталогу с файлом
@@ -63,12 +63,12 @@ class SignMe extends Object
     /**
      * @var string $urlSign Url для подписи файла
      */
-    private $urlSign;
+    public $urlSign;
 
     /**
      * @var string $urlCheck Url для проверки подписи файла
      */
-    private $urlCheck;
+    public $urlCheck;
 
     public function __construct(array $config = [])
     {
@@ -99,9 +99,9 @@ class SignMe extends Object
 
         curl_setopt($curl, CURLOPT_POST, 1);
 
-        curl_exec($curl);
+        $response = curl_exec($curl);
 
-        $response = curl_getinfo($curl);
+        $info = curl_getinfo($curl);
 
         curl_close($curl);
 
@@ -127,10 +127,10 @@ class SignMe extends Object
 
     public function getFileName()
     {
-        if (empty($this->fileName)) {
-            $this->fileName = basename($this->fullFileName);
+        if (empty($this->_fileName)) {
+            $this->_fileName = basename($this->fullFileName);
         }
-        return $this->fileName;
+        return $this->_fileName;
     }
 
     private function getFileContents()
