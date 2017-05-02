@@ -105,7 +105,7 @@ class SignMe extends Object
 
         curl_close($curl);
 
-        return $response;
+        return $this->urlSign . '/' . $response;
     }
 
     /**
