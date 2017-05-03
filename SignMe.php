@@ -149,10 +149,22 @@ class SignMe extends Object
             CURLOPT_POST => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_CAINFO, $this->pathToCertificate,
         ];
+
+        if (empty($this->pathToCertificate)) {
+            $sslOptions = [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+            ];
+        } else {
+            $sslOptions = [
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_CAINFO, $this->pathToCertificate,
+            ];
+        }
+
+        $options = array_merge($options, $sslOptions);
 
         curl_setopt_array($curl, $options);
 
@@ -190,10 +202,22 @@ class SignMe extends Object
             CURLOPT_POST => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_CAINFO, $this->pathToCertificate,
         ];
+
+        if (empty($this->pathToCertificate)) {
+            $sslOptions = [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+            ];
+        } else {
+            $sslOptions = [
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_CAINFO, $this->pathToCertificate,
+            ];
+        }
+
+        $options = array_merge($options, $sslOptions);
 
         curl_setopt_array($curl, $options);
 
