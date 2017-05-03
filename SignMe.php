@@ -169,7 +169,39 @@ class SignMe extends Object
      */
     public function check()
     {
-        return true;
+        if (!file_exists($this->pathToCertificate)) {
+            throw new RuntimeException('File certificate:\'' . $this->pathToCertificate . '\' not found!\n
+            Try execute method SignMe::getCertificate()');
+        }
+        $this->getBase64();
+        $data = [
+            'filet' => $this->base64,
+            'md5' => $this->getMd5(),
+        ];
+        $data = [
+            'rfile' => json_encode($data)
+        ];
+
+        $curl = curl_init($this->urlCheck);
+
+        $options = [
+            CURLOPT_HTTPHEADER => ['Content-type : application/x-www-form-urlencoded'],
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_POST => 1,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_CAINFO, $this->pathToCertificate,
+        ];
+
+        curl_setopt_array($curl, $options);
+
+        $response = curl_exec( $curl );
+
+        curl_close($curl);
+
+        return $response;
     }
 
     /**
