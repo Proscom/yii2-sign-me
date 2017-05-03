@@ -70,10 +70,36 @@ class SignMe extends Object
      */
     public $urlCheck;
 
+    /**
+     * @var string $pathToCertificate Путь до файла сертификата
+     */
+    public $pathToCertificate;
+
     public function __construct(array $config = [])
     {
         $config = array_merge($config, require(__DIR__ . '/config.php'));
         parent::__construct($config);
+    }
+
+    public function getCertificate()
+    {
+        $curl = curl_init($this->urlSign);
+
+        $options = [
+            CURLOPT_CONNECT_ONLY => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0
+        ];
+
+        curl_setopt_array($curl, $options);
+
+        $response = curl_exec( $curl );
+
+        $certInfo   = curl_getinfo($curl);
+
+        curl_close($curl);
+
+        return true;
     }
 
     /**
@@ -101,7 +127,9 @@ class SignMe extends Object
             CURLOPT_POST => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
-            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_CAINFO, $this->pathToCertificate,
         ];
 
         curl_setopt_array($curl, $options);
