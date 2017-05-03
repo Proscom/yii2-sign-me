@@ -2,6 +2,8 @@
 
 namespace chumakovAnton\signMe;
 
+use Exception;
+use RuntimeException;
 use yii\base\Object;
 
 /**
@@ -88,26 +90,46 @@ class SignMe extends Object
         $options = [
             CURLOPT_CONNECT_ONLY => true,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => 0
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_CERTINFO => 1,
         ];
 
         curl_setopt_array($curl, $options);
 
         $response = curl_exec( $curl );
 
-        $certInfo   = curl_getinfo($curl);
+        $certInfo = curl_getinfo($curl, CURLINFO_CERTINFO);
 
         curl_close($curl);
 
-        return true;
+        if (!empty($certInfo[0]['Cert']) && !empty($certInfo[0])) {
+            if (file_exists($this->pathToCertificate)) {
+                $fileMd5 = md5_file($this->pathToCertificate);
+                $certMd5 = md5($certInfo[0]['Cert']);
+                if ($fileMd5 === $certMd5) {
+                    return true;
+                }
+            }
+            $result = file_put_contents($this->pathToCertificate, $certInfo[0]['Cert']);
+            if ($result) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Подписать файл
      * @return bool
+     * @throws Exception
      */
     public function sign()
     {
+        if (!file_exists($this->pathToCertificate)) {
+            throw new RuntimeException('File certificate:\'' . $this->pathToCertificate . '\' not found!\n
+            Try execute method SignMe::getCertificate()');
+        }
         $this->getBase64();
         $data = [
             'filet' => $this->base64,
