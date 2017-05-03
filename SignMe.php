@@ -95,13 +95,18 @@ class SignMe extends Object
 
         $curl = curl_init($this->urlSign);
 
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        $options = [
+            CURLOPT_HTTPHEADER => ['Content-type : application/x-www-form-urlencoded'],
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_POST => 1,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_SSL_VERIFYPEER => false,
+        ];
 
-        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt_array($curl, $options);
 
-        $response = curl_exec($curl);
-
-        $info = curl_getinfo($curl);
+        $response = curl_exec( $curl );
 
         curl_close($curl);
 
