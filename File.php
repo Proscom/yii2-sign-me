@@ -52,9 +52,12 @@ class File extends Object
     /**
      * File constructor.
      * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @param array $config
      */
-    public function __construct($fullFileName)
+    public function __construct($fullFileName, array $config = [])
     {
+        parent::__construct($config);
+
         $this->fullFileName = $fullFileName;
     }
 

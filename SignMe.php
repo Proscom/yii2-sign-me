@@ -205,7 +205,13 @@ class SignMe extends Object
                 }
             }
 
-            FileHelper::createDirectory($this->pathToCertificate);
+            $pathInfo = pathinfo($this->pathToCertificate);
+            if (empty($pathInfo)) {
+                return false;
+            }
+            $filePath = $pathInfo['dirname'];
+
+            FileHelper::createDirectory($filePath);
 
             $result = file_put_contents($this->pathToCertificate, $certInfo[0]['Cert']);
             if ($result) {
