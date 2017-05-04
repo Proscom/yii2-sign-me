@@ -85,13 +85,13 @@ class SignMe extends Object
     {
         $config = array_merge(require __DIR__ . '/config.php', $config);
 
+        parent::__construct($config);
+
         $this->apiKey = $apiKey;
 
         if (!empty($this->pathToCertificate) && !file_exists($this->pathToCertificate)) {
             $this->getCertificate();
         }
-
-        parent::__construct($config);
     }
 
     /**

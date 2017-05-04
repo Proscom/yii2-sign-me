@@ -9,6 +9,6 @@
 return [
     'urlSign' => 'https://sandbox.sign.me:443/signapi/sjson',
     'urlCheck' => 'https://sandbox.sign.me:443/signaturecheck/json',
-    'pathToCertificate' => '/etc/ssl/certs/sandboxsignme.crt',
+    'pathToCertificate' => '~/certs/sandboxsignme.crt',
     'returnUrl' => '',
 ];
