@@ -1,31 +1,54 @@
 <?php
+/**
+ * @license http://www.opensource.org/licenses/mit-license.php
+ */
 
 namespace chumakovAnton\signMe;
 
 use Exception;
-use RuntimeException;
 use yii\base\Object;
+use yii\helpers\FileHelper;
 
 /**
  * Class SignMe
+ *
+ * Sign.me service API library
+ *
+ * @author Chumakov Anton <anton.4umakov@yandex.ru>
+ *
  * @package chumakovAnton\signMe
  */
 class SignMe extends Object
 {
-    /**
-     * @var string $fullFileName Полный путь к файлу
-     */
-    public $fullFileName;
-
     /**
      * @var string $userPhone Номер телефона пользователя, подписывающего файл
      */
     public $userPhone;
 
     /**
-     * @var string $signatureSavePath Полный путь для сохранения электронной подписи
+     * @var string $userEmail Email пользователя, подписывающего файл
      */
-    public $signatureSavePath;
+    public $userEmail;
+
+    /**
+     * @var string $companyINN ИНН компании, подписывающей файл
+     */
+    public $companyINN;
+
+    /**
+     * @var string $companyOGRN ОГРН компании, подписывающей файл
+     */
+    public $companyOGRN;
+
+    /**
+     * @var integer $noEmail Установить 1, если нужно не высылать пользователю емеил
+     */
+    public $noEmail;
+
+    /**
+     * @var integer $forceSms Установить 1, если необходима двухфакторная авторизация
+     */
+    public $forceSms;
 
     /**
      * @var string $apiKey Ключ доступа к API
@@ -33,34 +56,9 @@ class SignMe extends Object
     public $apiKey;
 
     /**
-     * @var string $fileName Непосредственно имя файла с расширением
+     * @var string $returnUrl Адрес возврата после подписания
      */
-    private $_fileName;
-
-    /**
-     * @var string $filePath Путь к каталогу с файлом
-     */
-    private $filePath;
-
-    /**
-     * @var string $fileContents Содержимое файла в строке
-     */
-    private $fileContents;
-
-    /**
-     * @var string $base64 Содержимое файла в кодировке base64
-     */
-    private $base64;
-
-    /**
-     * @var string $md5 Контрольная сумма содержимого файла
-     */
-    private $md5;
-
-    /**
-     * @var string $signature Цифровая подпись
-     */
-    private $signature;
+    public $returnUrl;
 
     /**
      * @var string $urlSign Url для подписи файла
@@ -73,19 +71,114 @@ class SignMe extends Object
     public $urlCheck;
 
     /**
-     * @var string $pathToCertificate Путь до файла сертификата
+     * @var string $pathToCertificate Путь до файла ssl сертификата сервиса
      */
     public $pathToCertificate;
 
-    public function __construct(array $config = [])
+    /**
+     * SignMe constructor.
+     * @param string $apiKey
+     * @param array $config
+     * @throws \yii\base\Exception
+     */
+    public function __construct($apiKey, array $config = [])
     {
-        $config = array_merge($config, require(__DIR__ . '/config.php'));
+        $this->apiKey = $apiKey;
+
+        if (!empty($this->pathToCertificate) && !file_exists($this->pathToCertificate)) {
+            $this->getCertificate();
+        }
+
+        $config = array_merge(require __DIR__ . '/config.php', $config);
         parent::__construct($config);
     }
 
-    public function getCertificate()
+    /**
+     * Request sign file
+     * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @return string Return URL
+     * @throws Exception
+     */
+    public function sign($fullFileName)
     {
-        $curl = curl_init($this->urlSign);
+        $file = new File($fullFileName);
+
+        $data = [
+            'filet' => $file->base64,
+            'fname' => $file->fileName,
+            'md5' => $file->md5,
+            'key' => $this->apiKey,
+        ];
+        if (!empty($this->returnUrl)) {
+            $data['url'] = $this->returnUrl;
+        }
+        if (!empty($this->userEmail)) {
+            $data['user_email'] = $this->userEmail;
+        }
+        if (!empty($this->userPhone)) {
+            $data['user_ph'] = $this->userPhone;
+        }
+        if (!empty($this->companyINN)) {
+            $data['company_inn'] = $this->companyINN;
+        }
+        if (!empty($this->companyOGRN)) {
+            $data['company_ogrn'] = $this->companyOGRN;
+        }
+        if (!empty($this->noEmail)) {
+            $data['noemail'] = 1;
+        }
+        if (!empty($this->forceSms)) {
+            $data['forcesms'] = 1;
+        }
+
+        $data = 'rfile=' . json_encode($data);
+
+        $ch = curl_init($this->urlSign);
+
+        $this->setCurlRequestOptions($ch, $data);
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $this->urlSign . '/' . $response;
+    }
+
+    /**
+     * Request check signature of file
+     * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @return string JSON string response from sign.me
+     * @throws Exception
+     */
+    public function check($fullFileName)
+    {
+        $file = new File($fullFileName);
+
+        $data = [
+            'filet' => $file->base64,
+            'md5' => $file->md5,
+        ];
+        $data = 'rfile=' . json_encode($data);
+
+        $ch = curl_init($this->urlCheck);
+
+        $this->setCurlRequestOptions($ch, $data);
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $response;
+    }
+
+    /**
+     * Request for get SSL certificate from sign.me
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    private function getCertificate()
+    {
+        $ch = curl_init($this->urlSign);
 
         $options = [
             CURLOPT_CONNECT_ONLY => true,
@@ -94,15 +187,15 @@ class SignMe extends Object
             CURLOPT_CERTINFO => 1,
         ];
 
-        curl_setopt_array($curl, $options);
+        curl_setopt_array($ch, $options);
 
-        $response = curl_exec( $curl );
+        curl_exec($ch);
 
-        $certInfo = curl_getinfo($curl, CURLINFO_CERTINFO);
+        $certInfo = curl_getinfo($ch, CURLINFO_CERTINFO);
 
-        curl_close($curl);
+        curl_close($ch);
 
-        if (!empty($certInfo[0]['Cert']) && !empty($certInfo[0])) {
+        if (!empty($certInfo[0]) && !empty($certInfo[0]['Cert'])) {
             if (file_exists($this->pathToCertificate)) {
                 $fileMd5 = md5_file($this->pathToCertificate);
                 $certMd5 = md5($certInfo[0]['Cert']);
@@ -110,6 +203,9 @@ class SignMe extends Object
                     return true;
                 }
             }
+
+            FileHelper::createDirectory($this->pathToCertificate);
+
             $result = file_put_contents($this->pathToCertificate, $certInfo[0]['Cert']);
             if ($result) {
                 return true;
@@ -120,35 +216,24 @@ class SignMe extends Object
     }
 
     /**
-     * Подписать файл
+     * @param resource $ch
+     * @param mixed $postData Post fields content
      * @return bool
-     * @throws Exception
      */
-    public function sign()
+    private function setCurlRequestOptions($ch, $postData)
     {
-        if (!file_exists($this->pathToCertificate)) {
-            throw new RuntimeException('File certificate:\'' . $this->pathToCertificate . '\' not found!\n
-            Try execute method SignMe::getCertificate()');
-        }
-        $this->getBase64();
-        $data = [
-            'filet' => $this->base64,
-            'fname' => $this->fileName,
-            'key' => $this->apiKey,
-            'user_ph' => $this->userPhone,
-        ];
-        $data = [
-            'rfile' => json_encode($data)
-        ];
-
-        $curl = curl_init($this->urlSign);
-
         $options = [
             CURLOPT_HTTPHEADER => ['Content-type : application/x-www-form-urlencoded'],
-            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_POSTFIELDS => $postData,
             CURLOPT_POST => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
+        ];
+
+        $sslOptions = [
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_CAINFO, $this->pathToCertificate,
         ];
 
         if (empty($this->pathToCertificate)) {
@@ -156,121 +241,10 @@ class SignMe extends Object
                 CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_SSL_VERIFYHOST => 0,
             ];
-        } else {
-            $sslOptions = [
-                CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_CAINFO, $this->pathToCertificate,
-            ];
         }
 
-        $options = array_merge($options, $sslOptions);
+        $options += $sslOptions;
 
-        curl_setopt_array($curl, $options);
-
-        $response = curl_exec( $curl );
-
-        curl_close($curl);
-
-        return $this->urlSign . '/' . $response;
-    }
-
-    /**
-     * Проверить подпись файла
-     * @return bool
-     */
-    public function check()
-    {
-        if (!file_exists($this->pathToCertificate)) {
-            throw new RuntimeException('File certificate:\'' . $this->pathToCertificate . '\' not found!\n
-            Try execute method SignMe::getCertificate()');
-        }
-        $this->getBase64();
-        $data = [
-            'filet' => $this->base64,
-            'md5' => $this->getMd5(),
-        ];
-        $data = [
-            'rfile' => json_encode($data)
-        ];
-
-        $curl = curl_init($this->urlCheck);
-
-        $options = [
-            CURLOPT_HTTPHEADER => ['Content-type : application/x-www-form-urlencoded'],
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_POST => 1,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HEADER => 0,
-        ];
-
-        if (empty($this->pathToCertificate)) {
-            $sslOptions = [
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
-            ];
-        } else {
-            $sslOptions = [
-                CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_SSL_VERIFYHOST => 2,
-                CURLOPT_CAINFO, $this->pathToCertificate,
-            ];
-        }
-
-        $options = array_merge($options, $sslOptions);
-
-        curl_setopt_array($curl, $options);
-
-        $response = curl_exec( $curl );
-
-        curl_close($curl);
-
-        return $response;
-    }
-
-    /**
-     * Сохранить электронную подпись в файл
-     */
-    public function saveSignature()
-    {
-        return true;
-    }
-
-    public function getFileName()
-    {
-        if (empty($this->_fileName)) {
-            $this->_fileName = basename($this->fullFileName);
-        }
-        return $this->_fileName;
-    }
-
-    private function getFileContents()
-    {
-        if (empty($this->fullFileName)) {
-            return false;
-        }
-        if (!file_exists($this->fullFileName)) {
-            return false;
-        }
-        $this->fileContents = file_get_contents($this->fullFileName);
-        return $this->fileContents;
-    }
-
-    private function getBase64()
-    {
-        if (empty($this->fileContents)) {
-            $this->getFileContents();
-        }
-        $this->base64 = base64_encode($this->fileContents);
-        return $this->base64;
-    }
-
-    private function getMd5()
-    {
-        if (empty($this->fullFileName)) {
-            return false;
-        }
-        $this->md5 = md5_file($this->fullFileName);
-        return $this->md5;
+        return curl_setopt_array($ch, $options);
     }
 }
