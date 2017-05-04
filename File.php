@@ -9,13 +9,15 @@
 namespace chumakovAnton\signMe;
 
 
+use yii\base\Object;
+
 /**
  * @property mixed fileName
  * @property mixed md5
  * @property mixed base64
  * @property mixed fileContents
  */
-class File
+class File extends Object
 {
     /**
      * @var string $fullFileName Полный путь к файлу
