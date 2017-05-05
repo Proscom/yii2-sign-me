@@ -143,7 +143,7 @@ class SignMe extends Object
 
         curl_close($ch);
 
-        if (0===stripos($response, 'error')) {
+        if (0 === stripos($response, 'error')) {
             throw new RuntimeException($response);
         }
 
@@ -174,7 +174,7 @@ class SignMe extends Object
 
         curl_close($ch);
 
-        if (0===stripos($response, 'error')) {
+        if (0 === stripos($response, 'error')) {
             throw new RuntimeException($response);
         }
 
