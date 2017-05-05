@@ -156,7 +156,7 @@ class SignMe extends Object
         $file = new File($fullFileName);
 
         $data = [
-            'filet' => $file->base64,
+            //'filet' => $file->base64,
             'md5' => $file->md5,
         ];
         $data = 'rfile=' . json_encode($data);
