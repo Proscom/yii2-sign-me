@@ -9,6 +9,8 @@
 namespace chumakovAnton\signMe;
 
 
+use Exception;
+use RuntimeException;
 use yii\base\Object;
 
 /**
@@ -53,10 +55,15 @@ class File extends Object
      * File constructor.
      * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
      * @param array $config
+     * @throws Exception
      */
     public function __construct($fullFileName, array $config = [])
     {
         parent::__construct($config);
+
+        if (!file_exists($fullFileName)) {
+            throw new RuntimeException('File not found!');
+        }
 
         $this->fullFileName = $fullFileName;
     }

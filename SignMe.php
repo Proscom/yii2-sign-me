@@ -6,6 +6,7 @@
 namespace chumakovAnton\signMe;
 
 use Exception;
+use RuntimeException;
 use yii\base\Object;
 use yii\helpers\FileHelper;
 
@@ -142,6 +143,10 @@ class SignMe extends Object
 
         curl_close($ch);
 
+        if (0===stripos($response, 'error')) {
+            throw new RuntimeException($response);
+        }
+
         return $this->urlSign . '/' . $response;
     }
 
@@ -168,6 +173,10 @@ class SignMe extends Object
         $response = curl_exec($ch);
 
         curl_close($ch);
+
+        if (0===stripos($response, 'error')) {
+            throw new RuntimeException($response);
+        }
 
         return $response;
     }
