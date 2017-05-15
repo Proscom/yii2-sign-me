@@ -28,5 +28,12 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-<?= \chumakovAnton\signMe\AutoloadExample::widget(); ?>
+$sign = new SignMe('apiKey', [
+        'userPhone' => '+71234567890',
+        'pathToCertificate' => ''
+    ]);
+    
+$sign = $sign->sign($filename);
+
+$check = $sign->check($filename);
 ```
