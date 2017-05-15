@@ -33,7 +33,7 @@ $sign = new SignMe('apiKey', [
         'pathToCertificate' => ''
     ]);
     
-$sign = $sign->sign($filename);
+$signResult = $sign->sign($filename);
 
-$check = $sign->check($filename);
+$checkResult = $sign->check($filename);
 ```
