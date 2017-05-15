@@ -1,4 +1,4 @@
-chumakovanton/yii2-sign-me
+proscom/yii2-sign-me
 ==========================
 Extension for sign.me service
 
@@ -10,13 +10,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist chumakovanton/yii2-sign-me "*"
+php composer.phar require --prefer-dist proscom/yii2-sign-me "*"
 ```
 
 or add
 
 ```
-"chumakovanton/yii2-sign-me": "*"
+"proscom/yii2-sign-me": "*"
 ```
 
 to the require section of your `composer.json` file.

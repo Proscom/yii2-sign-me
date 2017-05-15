@@ -6,7 +6,7 @@
  * Time: 13:56
  */
 
-namespace chumakovAnton\signMe;
+namespace proscom\signMe;
 
 
 use Exception;

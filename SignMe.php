@@ -3,7 +3,7 @@
  * @license http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace chumakovAnton\signMe;
+namespace proscom\signMe;
 
 use Exception;
 use RuntimeException;
@@ -17,7 +17,7 @@ use yii\helpers\FileHelper;
  *
  * @author Chumakov Anton <anton.4umakov@yandex.ru>
  *
- * @package chumakovAnton\signMe
+ * @package proscom\signMe
  */
 class SignMe extends Object
 {

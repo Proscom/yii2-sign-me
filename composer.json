@@ -1,5 +1,5 @@
 {
-    "name": "chumakovanton/yii2-sign-me",
+    "name": "proscom/yii2-sign-me",
     "description": "Extension for sign.me service",
     "type": "yii2-extension",
     "keywords": ["yii2","extension"," sign.me"," EDS"," digital signature"],
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "chumakovAnton\\signMe\\": ""
+            "proscom\\signMe\\": ""
         }
     }
 }
