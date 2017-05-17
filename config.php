@@ -6,6 +6,9 @@
  * Time: 14:37
  */
 
+/**
+ * Default config for sandbox API
+ */
 return [
     'urlSign' => 'https://sandbox.sign.me:443/signapi/sjson',
     'urlCheck' => 'https://sandbox.sign.me:443/signaturecheck/json',

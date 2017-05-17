@@ -78,21 +78,30 @@ class SignMe extends Object
 
     /**
      * SignMe constructor.
-     * @param string $apiKey
      * @param array $config
-     * @throws \yii\base\Exception
      */
-    public function __construct($apiKey, array $config = [])
+    public function __construct(array $config = [])
     {
         $config = array_merge(require __DIR__ . '/config.php', $config);
 
         parent::__construct($config);
+    }
 
-        $this->apiKey = $apiKey;
+    /**
+     * SignMe init
+     * @throws Exception
+     */
+    public function init()
+    {
+        if (empty($this->apiKey)) {
+            throw new RuntimeException('Missing required parameter "apiKey".');
+        }
 
         if (!empty($this->pathToCertificate) && !file_exists($this->pathToCertificate)) {
             $this->getCertificate();
         }
+
+        parent::init();
     }
 
     /**
