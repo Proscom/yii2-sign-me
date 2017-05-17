@@ -30,9 +30,11 @@ Config application :
 ```php
 'components' => [
     //  ...
-    'signMe' => function() {
-            return new SignMe('apiKey', ['pathToCertificate' => 'path/to/certificate']);
-        },
+    'signMe' => [
+            'class' => SignMe::className(),
+            'apiKey' => 'SIGNME_API_KEY',
+            'pathToCertificate' => 'path/to/certificate',
+        ],
 ]
     
 $sign = Yii::$app->signMe;
@@ -48,10 +50,11 @@ $checkResult = $sign->check($filename);
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-$sign = new SignMe('apiKey', [
-        'userPhone' => '+71234567890',
-        'pathToCertificate' => ''
-    ]);
+$sign = new SignMe([
+    'apiKey' => 'SIGNME_API_KEY',
+    'userPhone' => '+71234567890',
+    'pathToCertificate' => 'path/to/certificate'
+]);
     
 $signResult = $sign->sign($filename);
     
