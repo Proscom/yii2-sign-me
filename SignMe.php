@@ -18,6 +18,9 @@ use yii\helpers\FileHelper;
  * @author Chumakov Anton <anton.4umakov@yandex.ru>
  *
  * @package proscom\signMe
+ *
+ * @property resource $curlRequestOptions
+ * @property bool $certificate
  */
 class SignMe extends Object
 {
@@ -106,14 +109,12 @@ class SignMe extends Object
 
     /**
      * Request sign file
-     * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @param File $file File for sign
      * @return string Return URL
      * @throws Exception
      */
-    public function sign($fullFileName)
+    public function sign(File $file)
     {
-        $file = new File($fullFileName);
-
         $data = [
             'filet' => $file->base64,
             'fname' => $file->fileName,
@@ -161,14 +162,12 @@ class SignMe extends Object
 
     /**
      * Request check signature of file
-     * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @param File $file File for check
      * @return string JSON string response from sign.me
      * @throws Exception
      */
-    public function check($fullFileName)
+    public function check($file)
     {
-        $file = new File($fullFileName);
-
         $data = [
             //'filet' => $file->base64,
             'md5' => $file->md5,

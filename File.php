@@ -8,38 +8,27 @@
 
 namespace proscom\signMe;
 
-
-use Exception;
-use RuntimeException;
 use yii\base\Object;
 
 /**
  * @property mixed fileName
  * @property mixed md5
  * @property mixed base64
- * @property mixed fileContents
+ * @property string $content
+ * @property string $fileContents
+ * @property string _content
  */
 class File extends Object
 {
-    /**
-     * @var string $fullFileName Полный путь к файлу
-     */
-    public $fullFileName;
-
     /**
      * @var string $fileName Непосредственно имя файла с расширением
      */
     private $_fileName;
 
     /**
-     * @var string $filePath Путь к каталогу с файлом
+     * @var string $_content Содержимое файла в строке
      */
-    private $_filePath;
-
-    /**
-     * @var string $_fileContents Содержимое файла в строке
-     */
-    private $_fileContents;
+    private $_content;
 
     /**
      * @var string $_base64 Содержимое файла в кодировке _base64
@@ -53,65 +42,48 @@ class File extends Object
 
     /**
      * File constructor.
-     * @param string $fullFileName Full path to file with filename ('/path/to/file/filename.extension')
+     * @param string $content
      * @param array $config
-     * @throws Exception
      */
-    public function __construct($fullFileName, array $config = [])
+    public function __construct($content, array $config = [])
     {
         parent::__construct($config);
 
-        if (!file_exists($fullFileName)) {
-            throw new RuntimeException('File not found!');
-        }
-
-        $this->fullFileName = $fullFileName;
+        $this->setContent($content);
     }
 
     /**
-     * Get filename file ( '/path/to/file/filename.extension' => 'filename.extension')
+     * Get filename file
      * @return string
      */
     public function getFileName()
     {
-        if (empty($this->_fileName)) {
-            $this->_fileName = basename($this->fullFileName);
-        }
         return $this->_fileName;
     }
 
     /**
-     * Get path to file ( '/path/to/file/filename.extension' => '/path/to/file')
-     * @return string
+     * @param string $fileName
      */
-    public function getFilePath()
+    public function setFileName($fileName)
     {
-        if (empty($this->_filePath)) {
-            $pathInfo = pathinfo($this->fullFileName);
-            if (empty($pathInfo)) {
-                return '';
-            }
-            $this->_filePath = $pathInfo['dirname'];
-        }
-        return $this->_filePath;
+        $this->_fileName = $fileName;
     }
 
     /**
-     * Get file contents and fill _fileContents field
-     * @return bool|string
+     * Get content
+     * @return string
      */
     public function getFileContents()
     {
-        if (empty($this->fullFileName)) {
-            return false;
-        }
-        if (!file_exists($this->fullFileName)) {
-            return false;
-        }
-        if (empty($this->_fileContents)) {
-            $this->_fileContents = file_get_contents($this->fullFileName);
-        }
-        return $this->_fileContents;
+        return $this->_content;
+    }
+
+    /**
+     * @param string $content
+     */
+    public function setContent($content)
+    {
+        $this->_content = $content;
     }
 
     /**
@@ -120,7 +92,7 @@ class File extends Object
      */
     public function getBase64()
     {
-        $this->_base64 = base64_encode($this->fileContents);
+        $this->_base64 = base64_encode($this->_content);
         return $this->_base64;
     }
 
@@ -130,7 +102,7 @@ class File extends Object
      */
     public function getMd5()
     {
-        $this->_md5 = md5($this->fileContents);
+        $this->_md5 = md5($this->_content);
         return $this->_md5;
     }
 }
