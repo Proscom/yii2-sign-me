@@ -42,13 +42,15 @@ class File extends Object
 
     /**
      * File constructor.
-     * @param string $content
+     * @param string $name Имя файла
+     * @param string $content Содержимое файла
      * @param array $config
      */
-    public function __construct($content, array $config = [])
+    public function __construct(string $name, string $content, array $config = [])
     {
         parent::__construct($config);
 
+        $this->setFileName($name);
         $this->setContent($content);
     }
 
@@ -56,7 +58,7 @@ class File extends Object
      * Get filename file
      * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->_fileName;
     }
@@ -73,7 +75,7 @@ class File extends Object
      * Get content
      * @return string
      */
-    public function getFileContents()
+    public function getFileContents(): string
     {
         return $this->_content;
     }
@@ -90,7 +92,7 @@ class File extends Object
      * Get base64 string of file content
      * @return string
      */
-    public function getBase64()
+    public function getBase64(): string
     {
         $this->_base64 = base64_encode($this->_content);
         return $this->_base64;
@@ -100,7 +102,7 @@ class File extends Object
      * Get md5 hash of file content
      * @return string
      */
-    public function getMd5()
+    public function getMd5(): string
     {
         $this->_md5 = md5($this->_content);
         return $this->_md5;
