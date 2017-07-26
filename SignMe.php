@@ -113,7 +113,7 @@ class SignMe extends Object
      * @return string Return URL
      * @throws Exception
      */
-    public function sign(File $file)
+    public function sign(File $file): string
     {
         $data = [
             'filet' => $file->base64,
@@ -166,7 +166,7 @@ class SignMe extends Object
      * @return string JSON string response from sign.me
      * @throws Exception
      */
-    public function check($file)
+    public function check(File $file): string
     {
         $data = [
             //'filet' => $file->base64,
@@ -194,7 +194,7 @@ class SignMe extends Object
      * @return bool
      * @throws \yii\base\Exception
      */
-    private function getCertificate()
+    private function getCertificate(): bool
     {
         $ch = curl_init($this->urlSign);
 
@@ -244,7 +244,7 @@ class SignMe extends Object
      * @param mixed $postData Post fields content
      * @return bool
      */
-    private function setCurlRequestOptions($ch, $postData)
+    private function setCurlRequestOptions($ch, $postData): bool
     {
         $options = [
             CURLOPT_HTTPHEADER => ['Content-type : application/x-www-form-urlencoded'],

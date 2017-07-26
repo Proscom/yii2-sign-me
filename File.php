@@ -66,7 +66,7 @@ class File extends Object
     /**
      * @param string $fileName
      */
-    public function setFileName($fileName)
+    public function setFileName(string $fileName)
     {
         $this->_fileName = $fileName;
     }
@@ -83,7 +83,7 @@ class File extends Object
     /**
      * @param string $content
      */
-    public function setContent($content)
+    public function setContent(string $content)
     {
         $this->_content = $content;
     }
