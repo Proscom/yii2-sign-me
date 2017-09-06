@@ -36,27 +36,33 @@ Config application :
             'pathToCertificate' => 'path/to/certificate',
         ],
 ]
-    
-$sign = Yii::$app->signMe;
-    
-$sign->userPhone = '+71234567890';
-    
-$signResult = $sign->sign($filename);
-    
-$checkResult = $sign->check($filename);
 
 ```
 
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-$sign = new SignMe([
+$sign = Yii::$app->signMe;
+    
+$sign->userPhone = '+71234567890';
+    
+$file = new \proscom\signMe\File($filename, $content);
+    
+$signResult = $sign->sign($file);
+    
+$checkResult = $sign->check($file);
+```
+OR
+```php
+$sign = new \proscom\signMe\SignMe([
     'apiKey' => 'SIGNME_API_KEY',
     'userPhone' => '+71234567890',
     'pathToCertificate' => 'path/to/certificate'
 ]);
     
-$signResult = $sign->sign($filename);
+$file = new \proscom\signMe\File($filename, $content);
     
-$checkResult = $sign->check($filename);
+$signResult = $sign->sign($file);
+    
+$checkResult = $sign->check($file);
 ```

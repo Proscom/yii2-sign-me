@@ -2,7 +2,7 @@
     "name": "proscom/yii2-sign-me",
     "description": "Extension for sign.me service",
     "type": "yii2-extension",
-    "keywords": ["yii2","extension"," sign.me"," EDS"," digital signature"],
+    "keywords": ["yii2","extension","sign.me","EDS","digital signature"],
     "license": "MIT",
     "authors": [
         {
