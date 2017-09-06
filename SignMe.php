@@ -109,16 +109,16 @@ class SignMe extends Object
 
     /**
      * Request sign file
-     * @param File $file File for sign
+     * @param SignedInterface $signedEntity File for sign
      * @return string Return URL
      * @throws Exception
      */
-    public function sign(File $file): string
+    public function sign(SignedInterface $signedEntity): string
     {
         $data = [
-            'filet' => $file->base64,
-            'fname' => $file->fileName,
-            'md5' => $file->md5,
+            'filet' => $signedEntity->getBase64(),
+            'fname' => $signedEntity->getFileName(),
+            'md5' => $signedEntity->getMd5(),
             'key' => $this->apiKey,
         ];
         if (!empty($this->returnUrl)) {
@@ -162,15 +162,14 @@ class SignMe extends Object
 
     /**
      * Request check signature of file
-     * @param File $file File for check
+     * @param SignedInterface $signedEntity File for check
      * @return string JSON string response from sign.me
-     * @throws Exception
+     * @throws \RuntimeException
      */
-    public function check(File $file): string
+    public function check(SignedInterface $signedEntity): string
     {
         $data = [
-            //'filet' => $file->base64,
-            'md5' => $file->md5,
+            'md5' => $signedEntity->getMd5(),
         ];
         $data = 'rfile=' . json_encode($data);
 

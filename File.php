@@ -11,14 +11,14 @@ namespace proscom\signMe;
 use yii\base\Object;
 
 /**
- * @property mixed fileName
- * @property mixed md5
- * @property mixed base64
+ * @property string fileName
+ * @property string md5
+ * @property string base64
  * @property string $content
  * @property string $fileContents
  * @property string _content
  */
-class File extends Object
+class File extends Object implements SignedInterface
 {
     /**
      * @var string $fileName Непосредственно имя файла с расширением
