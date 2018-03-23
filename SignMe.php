@@ -232,7 +232,7 @@ class SignMe extends Object
 
         $ch = curl_init($this->urlCert);
 
-        $this->setCurlRequestOptions($ch, $data);
+        $this->setCurlRequestOptions($ch, http_build_query($data));
 
         $response = curl_exec($ch);
 
