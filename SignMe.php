@@ -84,20 +84,20 @@ class SignMe extends Object
     public $pathToCertificate;
 
     /** неактивные сертификаты */
-    protected const CERT_ONLY_INACTIVE = 0;
+    public const CERT_ONLY_INACTIVE = 0;
     /** активные сертификаты */
-    protected const CERT_ONLY_ACTIVE = 1;
+    public const CERT_ONLY_ACTIVE = 1;
     /** сертификаты на пользователя */
-    protected const CERT_ONLY_USER = 0;
+    public const CERT_ONLY_USER = 0;
     /** сертификаты на компанию */
-    protected const CERT_ONLY_COMPANY = 1;
+    public const CERT_ONLY_COMPANY = 1;
     /** формат PEM */
-    protected const CERT_FORMAT_PEM = 0;
+    public const CERT_FORMAT_PEM = 0;
     /** формат CER */
-    protected const CERT_FORMAT_CER = 1;
+    public const CERT_FORMAT_CER = 1;
 
     /** все сертификаты */
-    protected const CERT_ALL = 2;
+    public const CERT_ALL = 2;
     
     /**
      * SignMe constructor.
