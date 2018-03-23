@@ -20,7 +20,6 @@ use yii\helpers\FileHelper;
  * @package proscom\signMe
  *
  * @property resource $curlRequestOptions
- * @property bool $certificate
  */
 class SignMe extends Object
 {
@@ -75,10 +74,31 @@ class SignMe extends Object
     public $urlCheck;
 
     /**
+     * @var string $urlCert Url для получения сертификатов электронной подписи
+     */
+    public $urlCert;
+
+    /**
      * @var string $pathToCertificate Путь до файла ssl сертификата сервиса
      */
     public $pathToCertificate;
 
+    /** неактивные сертификаты */
+    protected static const CERT_ONLY_INACTIVE = 0;
+    /** активные сертификаты */
+    protected static const CERT_ONLY_ACTIVE = 1;
+    /** сертификаты на пользователя */
+    protected static const CERT_ONLY_USER = 0;
+    /** сертификаты на компанию */
+    protected static const CERT_ONLY_COMPANY = 1;
+    /** формат PEM */
+    protected static const CERT_FORMAT_PEM = 0;
+    /** формат CER */
+    protected static const CERT_FORMAT_CER = 1;
+
+    /** все сертификаты */
+    protected static const CERT_ALL = 2;
+    
     /**
      * SignMe constructor.
      * @param array $config
@@ -101,7 +121,7 @@ class SignMe extends Object
         }
 
         if (!empty($this->pathToCertificate) && !file_exists($this->pathToCertificate)) {
-            $this->getCertificate();
+            $this->initSSLCertificate();
         }
 
         parent::init();
@@ -189,11 +209,48 @@ class SignMe extends Object
     }
 
     /**
+     * Request for get user certificates
+     * @param int|null $active - active status [SignMe::CERT_ONLY_ACTIVE, SignMe::CERT_ONLY_INACTIVE, SignMe::CERT_ALL]
+     * @param int|null $allCerts - for user or company [SignMe::CERT_ONLY_USER, SignMe::CERT_ONLY_COMPANY, SignMe::CERT_ALL]
+     * @param int|null $format - format of certificate [SignMe::CERT_FORMAT_CER, SignMe::CERT_FORMAT_PEM]
+     * @return string
+     * @throws \RuntimeException
+     */
+    public function requestCertificate(?int $active = self::CERT_ALL, ?int $allCerts = self::CERT_ALL, ?int $format = self::CERT_FORMAT_PEM): string
+    {
+        $data = [
+            'get_active_certs' => $active,
+            'get_all_certs' => $allCerts,
+            'format' => $format,
+        ];
+        if (!empty($this->userPhone)) {
+            $data['user_ph'] = $this->userPhone;
+        }
+        if (!empty($this->companyOGRN)) {
+            $data['company_ogrn'] = $this->companyOGRN;
+        }
+
+        $ch = curl_init($this->urlCert);
+
+        $this->setCurlRequestOptions($ch, $data);
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        if (0 === stripos($response, 'error')) {
+            throw new RuntimeException($response);
+        }
+
+        return $response;
+    }
+
+    /**
      * Request for get SSL certificate from sign.me
      * @return bool
      * @throws \yii\base\Exception
      */
-    private function getCertificate(): bool
+    private function initSSLCertificate(): bool
     {
         $ch = curl_init($this->urlSign);
 

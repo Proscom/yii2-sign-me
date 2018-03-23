@@ -13,6 +13,7 @@
 return [
     'urlSign' => 'https://sandbox.sign.me:443/signapi/sjson',
     'urlCheck' => 'https://sandbox.sign.me:443/signaturecheck/json',
+    'urlCert' => 'https://sandbox.sign.me:443/sign/cer/',
     'pathToCertificate' => __DIR__ . '/certs/sandboxsignme.crt',
     'returnUrl' => '',
 ];
