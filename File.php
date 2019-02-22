@@ -8,7 +8,8 @@
 
 namespace proscom\signMe;
 
-use yii\base\Object;
+
+use yii\base\BaseObject;
 
 /**
  * @property string fileName
@@ -18,7 +19,7 @@ use yii\base\Object;
  * @property string $fileContents
  * @property string _content
  */
-class File extends Object implements SignedInterface
+class File extends BaseObject implements SignedInterface
 {
     /**
      * @var string $fileName Непосредственно имя файла с расширением

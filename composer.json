@@ -11,8 +11,11 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "*",
-        "roave/security-advisories": "dev-master"
+        "yiisoft/yii2": "~2.0.16",
+        "roave/security-advisories": "dev-master",
+        "php": ">=7.2",
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {

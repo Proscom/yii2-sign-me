@@ -7,7 +7,7 @@ namespace proscom\signMe;
 
 use Exception;
 use RuntimeException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\FileHelper;
 
 /**
@@ -21,7 +21,7 @@ use yii\helpers\FileHelper;
  *
  * @property resource $curlRequestOptions
  */
-class SignMe extends Object
+class SignMe extends BaseObject
 {
     /**
      * @var string $userPhone Номер телефона пользователя, подписывающего файл
